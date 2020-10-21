@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>DBCart</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        /* Remove the navbar's default rounded borders and increase the bottom margin */
+        .navbar {
+            margin-bottom: 50px;
+            border-radius: 0;
+        }
+
+        /* Remove the jumbotron's default bottom margin */
+        .jumbotron {
+            margin-bottom: 20px;
+            background-color: #4EEAEA;
+        }
+
+        /* Add a gray background color and some padding to the footer */
+        footer {
+            background-color: #f2f2f2;
+            padding: 25px;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* Float four columns side by side */
+        .column {
+            float: left;
+            width: 25%;
+            padding: 10px 10px;
+        }
+
+        /* Remove extra left and right margins, due to padding */
+        .row {
+            margin: 0 -5px;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Responsive columns */
+        @media screen and (max-width: 600px) {
+            .column {
+                width: 100%;
+                display: block;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Style the counter cards */
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            text-align: center;
+            background-color: #f1f1f1;
+        }
+
+
+
+        .qty {
+            width: 50px;
+            height: 25px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1 style="color:white">DBCart Online Store</h1>
+            <p>Best Quality, Best Products & Best Price</p>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><span style="color:blue">DBcart</span> </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li style="cursor:pointer"><a href="/Cart"><span class="glyphicon glyphicon-shopping-cart"></span>
+                            Cart</a></li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false"> <span class="glyphicon glyphicon-user"></span> Account <span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu">
+
+                            <li role="separator" class="divider"></li>
+
+                            <li>
+                                <form method="POST" action="Logout">
+                                    <button type="submit" class="btn btn-danger" style="width: 100%; ">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <form method="POST" action="/create_order">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"> Order Confirmation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input hidden name="product_id" id="product_id" />
+                        <input hidden name="net_amount" id="net_amount" />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2 id="product_name"></h2>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8" style="text-align:left; float:center;">
+                                <h3 id="selected_product_price"></h3>
+                            </div>
+                            <div class="col-md-2" style="text-align:right;float:center;">
+                                <p>Quantity: </p>
+                            </div>
+                            <div class="col-md-2" style="text-align:left;float:center;">
+                                <input type='number' onchange="update_price()" name='quantity' min="1" value='1'
+                                    id="selected_product_quantity" class='qty' />
+                            </div>
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>Do you want to place the order?</p>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success" id="order_btn">Place Order</button>
+
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+
+        <h2 id='test'></h2>
+        <h2>Product List</h2>
+        <div class="row" id="product_container">
+
+        </div>
+
+    </div>
+    <br><br>
+    <footer class="container-fluid text-center">
+        <p style="color:blue; cursor:pointer;"><a href="https://www.doodleblue.com">© 2020 doodleblue Innovations Pvt.
+                Ltd. | All rights reserved</a></p>
+    </footer>
+
+    <script>
+        function update_price() {
+            var per_unit_price = localStorage.getItem('selected_product_price');
+            var selected_product_quantity = $('#selected_product_quantity').val();
+            var new_price = per_unit_price * selected_product_quantity;
+            localStorage.setItem('net_amount', new_price);
+            $('#net_amount').val(new_price);
+            $('#selected_product_price').html("Price INR (&#x20b9;) " + new_price);
+        }
+
+        $(document).ready(function () {
+            $.get("/get_all_products",
+                {},
+                function (data, status) {
+                    if (status == 'success') {
+                        var cont = document.getElementById('product_container');
+
+                        var products = data;
+                        products.forEach(function (product) {
+
+                            var id = product['PRDT_ID']
+                            var name = product['PRDT_NAME'];
+                            var act_price = product['PRDT_PRICE'];
+                            var price = "Price INR (&#x20b9;) " + act_price;
+
+                            var column = document.createElement('div');
+                            column.setAttribute('class', 'column');
+
+                            var card = document.createElement('div');
+                            card.setAttribute('class', 'card');
+                            card.setAttribute('style', 'cursor:pointer')
+                            card.setAttribute('id', id)
+                            card.setAttribute('data-toggle', "modal")
+                            card.setAttribute('data-target', "#myModal")
+
+                            card.onclick = function () {
+                                localStorage.setItem("selected_product_id", id);
+                                localStorage.setItem("selected_product_name", name);
+                                localStorage.setItem("selected_product_price", act_price);
+                                localStorage.setItem('net_amount', act_price);
+
+                                $('#product_name').text(name);
+                                $('#selected_product_price').html(price);
+                                $('#product_id').val(id);
+                                $('#net_amount').val(act_price);
+                                $('#selected_product_quantity').val("1");
+                            }
+
+                            var h3 = document.createElement('h3');
+                            h3.innerHTML = name;
+
+                            var p = document.createElement('p');
+                            p.innerHTML = price;
+
+                            card.appendChild(h3);
+                            card.appendChild(p);
+                            column.appendChild(card);
+                            cont.appendChild(column);
+                        });
+                    }
+                }
+            );
+        });
+    </script>
+
+</body>
+
+</html>

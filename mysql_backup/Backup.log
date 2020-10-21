@@ -1,0 +1,30 @@
+﻿===========================================
+Log started at 10/20/2020 7:57:51 PM
+===========================================
+Application name: dbForge Studio 2019 Express for MySQL
+Connection string: User Id=root;Host=localhost;Character Set=utf8
+
+Objects included in the script (Tables):
+orders
+products
+users
+
+Objects included in the script (Views):
+
+Objects included in the script (Procedures):
+
+Objects included in the script (Functions):
+
+Objects included in the script (Events):
+Tables with data included in the script:
+products (9 rows)
+users (2 rows)
+orders (14 rows)
+
+Objects included in the script (Triggers):
+
+Error count: 0
+Warning count: 0
+===========================================
+Log stopped at 10/20/2020 7:57:52 PM
+===========================================

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>DBCart</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default rounded borders and increase the bottom margin */
+    .navbar {
+      margin-bottom: 50px;
+      border-radius: 0;
+    }
+
+    /* Remove the jumbotron's default bottom margin */
+    .jumbotron {
+      margin-bottom: 20px;
+      background-color: #4EEAEA;
+    }
+
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Float four columns side by side */
+    .column {
+      float: left;
+      width: 25%;
+      padding: 10px 10px;
+    }
+
+    /* Remove extra left and right margins, due to padding */
+    .row {
+      margin: 0 -5px;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    /* Responsive columns */
+    @media screen and (max-width: 600px) {
+      .column {
+        width: 100%;
+        display: block;
+        margin-bottom: 20px;
+      }
+    }
+
+    /* Style the counter cards */
+    .card {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      padding: 16px;
+      text-align: center;
+      background-color: #f1f1f1;
+    }
+
+
+
+    .qty {
+      width: 50px;
+      height: 25px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="jumbotron">
+    <div class="container text-center">
+      <h1 style="color:white">DBCart Online Store</h1>
+      <p>Best Quality, Best Products & Best Price</p>
+    </div>
+  </div>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#"><span style="color:blue">DBcart</span> </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" style="text-align: justify;">
+
+    <form method="POST" action="Login">
+
+      <div class="row">
+
+
+        <div class="col-md-3">
+
+        </div>
+
+
+        <div class="col-md-6">
+
+          <div class="row" style="text-align: center; border-spacing: 10px;">
+            <h2>Enter your credentails to login!</h2>
+          </div>
+
+          <div class="row" style="border-spacing: 5px; text-align: center;">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="float: center;">
+              <input type="text" name="username" placeholder="Username" style="width: 100%;" />
+            </div>
+            <div class="col-md-3"></div>
+          </div>
+
+          <div class="row" style="border-spacing: 5px; text-align: center;">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="float: center;">
+              <input type="password" name="password" placeholder="Password" style="width: 100%;" />
+            </div>
+            <div class="col-md-3"></div>
+          </div>
+
+          <div class="row" style="border-spacing: 5px; text-align: left;">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="float: center;">
+              <button class="btn btn-primary" type="submit" style="width: 100%;">Login</button>
+            </div>
+            <div class="col-md-3"></div>
+          </div>
+
+          <div class="row" style="text-align: center; border-spacing: 5px;">
+            <h5>New to our website? register <span> <a href="RegisterPage">here</a></span></h5>
+          </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+        </div>
+
+      </div>
+
+    </form>
+
+  </div>
+
+  <br><br>
+  <footer class="container-fluid text-center">
+    <p style="color:blue; cursor:pointer;"><a href="https://www.doodleblue.com">© 2020 doodleblue Innovations Pvt. Ltd.
+        | All rights reserved</a></p>
+  </footer>
+
+</body>
+
+</html>

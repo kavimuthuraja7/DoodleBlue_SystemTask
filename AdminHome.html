@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>DBCart</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        /* Remove the navbar's default rounded borders and increase the bottom margin */
+        .navbar {
+            margin-bottom: 50px;
+            border-radius: 0;
+        }
+
+        /* Remove the jumbotron's default bottom margin */
+        .jumbotron {
+            margin-bottom: 20px;
+            background-color: #4EEAEA;
+        }
+
+        /* Add a gray background color and some padding to the footer */
+        footer {
+            background-color: #f2f2f2;
+            padding: 25px;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* Float four columns side by side */
+        .column {
+            float: left;
+            width: 25%;
+            padding: 10px 10px;
+        }
+
+        /* Remove extra left and right margins, due to padding */
+        .row {
+            margin: 0 -5px;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Responsive columns */
+        @media screen and (max-width: 600px) {
+            .column {
+                width: 100%;
+                display: block;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Style the counter cards */
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            text-align: center;
+            background-color: #f1f1f1;
+        }
+
+
+
+        .qty {
+            width: 50px;
+            height: 25px;
+            text-align: center;
+        }
+
+
+        .SearchInput {
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            width: 100%;
+            font-size: 16px;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+        }
+
+        .Table_UI {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            font-size: 18px;
+        }
+
+        .Table_UI th,
+        .Table_UI td {
+            text-align: left;
+            padding: 12px;
+        }
+
+        .Table_UI tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .Table_UI tr.header,
+        .Table_UI tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1 style="color:white">DBCart Online Store</h1>
+            <p>Best Quality, Best Products & Best Price</p>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><span style="color:blue">DBcart</span> </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false"> <span class="glyphicon glyphicon-user"></span> Account <span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu">
+
+                            <li role="separator" class="divider"></li>
+
+                            <li>
+                                <form method="POST" action="Logout">
+                                    <button type="submit" class="btn btn-danger" style="width: 100%; ">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container">
+        <h2>Upload File to manage products</h2>
+        <div>
+
+            <form method="post" action="/upload" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-2">
+                        <button class="btn btn-warning" style="width: 100%;" onclick="download_template()"> Download
+                            Template</button>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6" style="text-align: right;">
+                                <input type="file" class="btn btn-primary" style="width: 100%;" name="file" />
+                            </div>
+                            <div class="col-md-2" style="text-align: left;">
+                                <input type="submit" class="btn btn-success" style="width: 100%;" value="Upload" />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+
+
+                </div>
+
+            </form>
+        </div>
+        <h2>Orders</h2>
+
+        <input type="text" id="NameInput" class="SearchInput" onkeyup="searchbyName()"
+            placeholder="Search for Customer...." title="Type in a name">
+        <div style="overflow-y:scroll;">
+            <table id="OrdersTable" class="Table_UI">
+                <tr class="header">
+                    <th style="width:20%;">Name</th>
+                    <th style="width:20%;">Product</th>
+                    <th style="width:20%;">Quantity</th>
+                    <th style="width:20%;">Amount</th>
+                    <th style="width:20%;">OrderDate</th>
+                </tr>
+            </table>
+        </div>
+
+        <h2>Products</h2>
+
+        <input type="text" class="SearchInput" id="ProductInput" onkeyup="searchbyProduct()"
+            placeholder="Search for Products...." title="Type in a name">
+        <div style="overflow-y:scroll;">
+            <table id="ProductsTable" class="Table_UI">
+                <tr class="header">
+                    <th style="width:25%;">Product</th>
+                    <th style="width:25%; text-align: center;">Total Orders</th>
+                    <th style="width:25%; text-align: center">Total Quantity</th>
+                    <th style="width:25%; text-align: center">Total Gain</th>
+                </tr>
+            </table>
+        </div>
+
+        <h2>Unit Price</h2>
+
+        <input type="text" class="SearchInput" id="UnitPriceInput" onkeyup="searchbyProduct2()"
+            placeholder="Search for Products...." title="Type in a name">
+        <div style="overflow-y:scroll;">
+            <table id="UnitPriceTable" class="Table_UI">
+                <tr class="header">
+                    <th style="width:10%;">S.No</th>
+                    <th style="width:30%;">Product</th>
+                    <th style="width:30%; text-align: center">Unit Price</th>
+                    <th style="width:30%; text-align: center">Category</th>
+                </tr>
+            </table>
+        </div>
+
+
+    </div>
+    <br><br>
+    <footer class="container-fluid text-center">
+        <p style="color:blue; cursor:pointer;"><a href="https://www.doodleblue.com">© 2020 doodleblue Innovations Pvt.
+                Ltd. | All rights reserved</a></p>
+    </footer>
+
+    <script>
+
+        function update_price() {
+            var per_unit_price = localStorage.getItem('selected_product_price');
+            var selected_product_quantity = $('#selected_product_quantity').val();
+            var new_price = per_unit_price * selected_product_quantity;
+            localStorage.setItem('net_amount', new_price);
+            $('#selected_product_price').html("Price INR (&#x20b9;) " + new_price);
+        }
+
+        $(document).ready(function () {
+            $.get("/get_all_orders",
+                {},
+                function (data, status) {
+
+                    if (status == 'success') {
+
+                        var orders = data;
+                        var count = 0;
+
+                        orders.forEach(function (order) {
+
+                            var OrdersTable = document.getElementById("OrdersTable");
+                            // Create an empty <tr> element for the order entry:
+                            var order_row = OrdersTable.insertRow(-1);
+
+                            // Insert new cells for the order details:
+                            var name = order_row.insertCell(0);
+                            var product = order_row.insertCell(1);
+                            var quantity = order_row.insertCell(2);
+                            var amount = order_row.insertCell(3);
+                            var order_date = order_row.insertCell(4);
+
+                            // Add value to order cells:
+                            name.innerHTML = order['USER_NAME'].toUpperCase();
+                            product.innerHTML = order['PRDT_NAME'].toUpperCase();
+                            quantity.innerHTML = order['PRDT_QTY'];
+                            amount.innerHTML = "&#x20b9; " + order['NET_AMT'];
+                            order_date.innerHTML = order['CREATED_ON'];
+
+                        });
+
+
+                    }
+
+
+                });
+        });
+
+        $(document).ready(function () {
+            $.get("/get_product_history",
+                {},
+                function (data, status) {
+
+                    if (status == 'success') {
+
+                        var products = data;
+                        var count = 0;
+
+                        products.forEach(function (product) {
+
+                            var ProductsTable = document.getElementById("ProductsTable");
+                            // Create an empty <tr> element for the order entry:
+                            var product_row = ProductsTable.insertRow(-1);
+
+                            // Insert new cells for the order details:
+                            var name = product_row.insertCell(0);
+                            var total_orders = product_row.insertCell(1);
+                            total_orders.style = "text-align:center";
+                            var total_quantity = product_row.insertCell(2);
+                            total_quantity.style = "text-align: center";
+                            var total_gain = product_row.insertCell(3);
+                            total_gain.style = "text-align: center";
+
+                            // Add value to order cells:
+                            name.innerHTML = product['PRDT_NAME'].toUpperCase();
+                            total_orders.innerHTML = product['total_orders'];
+                            total_quantity.innerHTML = product['total_quantity'];
+                            total_gain.innerHTML = "&#x20b9; " + product['total_gain'];
+
+                        });
+
+
+                    }
+
+
+                });
+        });
+
+        $(document).ready(function () {
+            $.get("/get_all_products",
+                {},
+                function (data, status) {
+
+                    if (status == 'success') {
+
+                        var products = data;
+                        var count = 0;
+
+                        products.forEach(function (product) {
+                            count += 1;
+
+                            var UnitPriceTable = document.getElementById("UnitPriceTable");
+                            // Create an empty <tr> element for the order entry:
+                            var UnitPriceRow = UnitPriceTable.insertRow(-1);
+
+                            // Insert new cells for the order details:
+                            var s_no = UnitPriceRow.insertCell(0);
+                            s_no.style = "text-align:center";
+                            var product_name = UnitPriceRow.insertCell(1);
+                            var unit_price = UnitPriceRow.insertCell(2);
+                            unit_price.style = "text-align:center";
+                            var category = UnitPriceRow.insertCell(3);
+                            category.style = "text-align:center";
+
+                            // Add value to order cells:
+                            s_no.innerHTML = count;
+                            product_name.innerHTML = product['PRDT_NAME'].toUpperCase();
+                            unit_price.innerHTML = "&#x20b9; " + product['PRDT_PRICE'];
+                            category.innerHTML = product['PRDT_TYPE'].toUpperCase();
+
+                        });
+
+
+                    }
+
+
+                });
+        });
+
+        function searchbyName() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("NameInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("OrdersTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function searchbyProduct() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("ProductInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("ProductsTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function searchbyProduct2() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("UnitPriceInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("UnitPriceTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function download_template() {
+            $.get("/download",
+                {},
+                function (data, status) {
+                    //alert('hi')
+                    window.location = "http://localhost:3000/download";
+                });
+        };
+
+    </script>
+
+</body>
+
+</html>
