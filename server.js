@@ -11,6 +11,7 @@ const mysql = require('mysql');
 const path = require('path');
 var cors = require('cors');
 var Excel = require('exceljs');
+const { isNullOrUndefined } = require('util');
 
 
 
@@ -176,7 +177,7 @@ app.get('/delete_order', function (req, res) {
     var order_id = req.query.order_id;
 
     if (req.session.loggedin) {
-        con.query("update orders set STATUS='Cancelled' where ORDER_ID=" + order_id, function (error, results, fields) {
+        con.query("delete from orders set STATUS='Cancelled' where ORDER_ID=" + order_id, function (error, results, fields) {
             if (error) throw error;
             res.header("Access-Control-Allow-Origin", "*");
             res.redirect('/Cart');
@@ -293,13 +294,37 @@ app.get('/get_products_ordered_by_date', function (req, res) {
 });
 
 
-// Getting List of ordered products
+// Getting List of ordered products with sort and search
 app.get('/get_ordered_products', function (req, res) {
 
     if (req.session.loggedin) {
-        var user_id = req.session.user_id;
+        var search_by = req.query.search_by.toLocaleLowerCase() || '';
+        var search_value = req.query.search_value.toLocaleLowerCase() || 0;
+        var sort_by = req.query.sort_by.toLocaleLowerCase() || '';
 
-        con.query("select orders.ORDER_ID, products.PRDT_PRICE, PRDT_NAME, PRDT_QTY, NET_AMT,orders.STATUS, orders.CREATED_ON from orders inner JOIN products on orders.PRDT_ID=products.PRDT_ID where orders.USER_ID=" + user_id + " order by orders.CREATED_ON desc", function (error, results, fields) {
+        var search_query = '';
+        var sort_query = '';
+
+        if (search_by != '') {
+            if (search_by == 'user' || search_by == "'user'") {
+                search_query += 'where orders.USER_ID=' + search_value;
+            }
+            else if (search_by == 'product') {
+                search_query += 'where orders.PRDT_ID=' + search_value;
+            }
+        }
+
+        if (sort_by != '') {
+            if (sort_by == 'lth') {
+                sort_query += 'order by orders.USER_ID ASC';
+            }
+            else if (sort_by == 'htl') {
+                sort_query += 'order by orders.USER_ID DESC';
+            }
+        }
+
+        //console.log("select products.PRDT_NAME, count(distinct(orders.USER_ID)) as 'total_users' from products left join orders on orders.PRDT_ID=products.PRDT_ID "+search_query+" group by products.PRDT_ID "+sort_query);
+        con.query("select products.PRDT_NAME, count(distinct(orders.USER_ID)) as 'total_users' from products left join orders on orders.PRDT_ID=products.PRDT_ID " + search_query + " group by products.PRDT_ID " + sort_query, function (error, results, fields) {
             if (error) throw error;
             res.header("Access-Control-Allow-Origin", "*");
             res.send(results);
@@ -314,12 +339,12 @@ app.get('/get_ordered_products', function (req, res) {
 });
 
 
-// Getting List of Customer based on the orders
+// Getting List of Customer based on the ordered products
 app.get('/get_ordered_customers', function (req, res) {
 
     if (req.session.loggedin) {
         if (req.session.user.USER_TYPE == 'Admin') {
-            con.query("select users.USER_NAME as 'username', count(ORDER_ID) as 'Order_Count' from orders inner join users on orders.USER_ID=users.USER_ID where orders.STATUS!='Cancelled' group by users.USER_NAME", function (error, results, fields) {
+            con.query("select users.USER_NAME as 'username', sum(PRDT_QTY) as 'Product_Count' from orders inner join users on orders.USER_ID=users.USER_ID where orders.STATUS!='Cancelled' group by orders.USER_ID", function (error, results, fields) {
                 if (error) throw error;
                 res.header("Access-Control-Allow-Origin", "*");
                 res.send(results);
