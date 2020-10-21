@@ -77,7 +77,12 @@ function upload_excel(filename) {
 app.get('/', function (req, res) {
 
     if (req.session.loggedin) {
-        res.sendFile(path.join(__dirname + '/CustomerHome.html'));
+        if (req.session.user.USER_TYPE == 'Customer') {
+            res.sendFile(path.join(__dirname + '/CustomerHome.html'));
+        }
+        else {
+            res.sendFile(path.join(__dirname + '/AdminHome.html'));
+        }
     } else {
         res.redirect('/LoginPage');
     }
@@ -88,7 +93,12 @@ app.get('/', function (req, res) {
 // Redirecting to login page
 app.get('/LoginPage', function (req, res) {
     if (req.session.loggedin) {
-        res.sendFile(path.join(__dirname + '/CustomerHome.html'));
+        if (req.session.user.USER_TYPE == 'Customer') {
+            res.sendFile(path.join(__dirname + '/CustomerHome.html'));
+        }
+        else {
+            res.sendFile(path.join(__dirname + '/AdminHome.html'));
+        }
     }
     else {
         res.sendFile(path.join(__dirname + '/Login.html'));
