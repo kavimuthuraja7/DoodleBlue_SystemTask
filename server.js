@@ -113,6 +113,12 @@ app.get('/RegisterPage', function (req, res) {
 });
 
 
+// Redirect to Admin registration page
+app.get('/AdminRegisterPage', function (req, res) {
+    res.sendFile(path.join(__dirname + '/AdminRegister.html'));
+});
+
+
 // Redirect to Admin Home page
 app.get('/AdminPage', function (req, res) {
     if (req.session.loggedin) {
@@ -339,6 +345,7 @@ app.post('/Logout', function (req, res) {
 app.post('/Register', function (req, res) {
 
     var username = req.body.username;
+    var type = req.body.type;
     var password = req.body.password;
     var confirm_password = req.body.confirm_password;
     var email = req.body.email;
@@ -363,7 +370,7 @@ app.post('/Register', function (req, res) {
 
                     if (username && user_password) {
 
-                        con.query("insert into users(USER_NAME, USER_MOBILE, USER_PASSWORD, USER_EMAIL) VALUES ('" + username + "', '" + mobile + "', '" + user_password + "', '" + email + "')", function (error, results, fields) {
+                        con.query("insert into users(USER_NAME, USER_MOBILE, USER_PASSWORD, USER_EMAIL, USER_TYPE) VALUES ('" + username + "', '" + mobile + "', '" + user_password + "', '" + email + "', '" + type + "')", function (error, results, fields) {
                             if (error) {
                                 console.log(error);
                                 res.redirect('/RegisterPage');
