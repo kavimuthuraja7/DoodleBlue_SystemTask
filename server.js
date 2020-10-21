@@ -10,6 +10,9 @@ const bcrypt = require("bcryptjs");
 const mysql = require('mysql');
 const path = require('path');
 var cors = require('cors');
+var Excel = require('exceljs');
+
+
 
 /*----------------------------------- Declaration Section ----------------------------------------------------------------------*/
 
@@ -225,6 +228,71 @@ app.get('/get_all_orders', function (req, res) {
 });
 
 
+// Getting list of order for specific users
+app.get('/get_user_orders', function (req, res) {
+    if (req.session.loggedin) {
+        con.query("select users.USER_NAME, products.PRDT_NAME, PRDT_QTY, NET_AMT,orders.STATUS, orders.CREATED_ON from orders inner JOIN products on orders.PRDT_ID=products.PRDT_ID inner join users on orders.USER_ID=users.USER_ID where orders.STATUS !='Cancelled' and orders.USER_ID=" + req.session.user.USER_ID + " order by orders.CREATED_ON desc", function (error, results, fields) {
+            if (error) throw error;
+            res.header("Access-Control-Allow-Origin", "*");
+            res.send(results);
+            res.end();
+        });
+    }
+    else {
+        res.redirect('/LoginPage');
+        res.end();
+    }
+});
+
+
+// Getting list of orders based on dates
+app.get('/get_orders_by_date', function (req, res) {
+    if (req.session.loggedin) {
+        if (req.session.user.USER_TYPE == 'Admin') {
+            con.query("select count(ORDER_ID) as 'Order_Count', CREATED_ON as 'Order_Date' from orders where STATUS!='Cancelled' group by date(CREATED_ON)", function (error, results, fields) {
+                if (error) throw error;
+                res.header("Access-Control-Allow-Origin", "*");
+                res.send(results);
+                res.end();
+            });
+        }
+        else {
+            res.header("Access-Control-Allow-Origin", "*");
+            res.send([]);
+        }
+
+    }
+    else {
+        res.redirect('/LoginPage');
+        res.end();
+    }
+});
+
+
+// Getting list of products odered based on dates
+app.get('/get_products_ordered_by_date', function (req, res) {
+    if (req.session.loggedin) {
+        if (req.session.user.USER_TYPE == 'Admin') {
+            con.query("select products.PRDT_NAME as 'Product', sum(orders.PRDT_QTY) as 'Count', orders.CREATED_ON as 'Order_Date' from orders inner join products on orders.PRDT_ID=products.PRDT_ID where orders.STATUS!='Cancelled' group by orders.PRDT_ID", function (error, results, fields) {
+                if (error) throw error;
+                res.header("Access-Control-Allow-Origin", "*");
+                res.send(results);
+                res.end();
+            });
+        }
+        else {
+            res.header("Access-Control-Allow-Origin", "*");
+            res.send([]);
+        }
+
+    }
+    else {
+        res.redirect('/LoginPage');
+        res.end();
+    }
+});
+
+
 // Getting List of ordered products
 app.get('/get_ordered_products', function (req, res) {
 
@@ -237,6 +305,32 @@ app.get('/get_ordered_products', function (req, res) {
             res.send(results);
             res.end();
         });
+    }
+    else {
+        res.redirect('/LoginPage');
+        res.end();
+    }
+
+});
+
+
+// Getting List of Customer based on the orders
+app.get('/get_ordered_customers', function (req, res) {
+
+    if (req.session.loggedin) {
+        if (req.session.user.USER_TYPE == 'Admin') {
+            con.query("select users.USER_NAME as 'username', count(ORDER_ID) as 'Order_Count' from orders inner join users on orders.USER_ID=users.USER_ID where orders.STATUS!='Cancelled' group by users.USER_NAME", function (error, results, fields) {
+                if (error) throw error;
+                res.header("Access-Control-Allow-Origin", "*");
+                res.send(results);
+                res.end();
+            });
+        }
+        else {
+            res.header("Access-Control-Allow-Origin", "*");
+            res.send([]);
+        }
+
     }
     else {
         res.redirect('/LoginPage');
@@ -268,9 +362,29 @@ app.get('/get_product_history', function (req, res) {
 // for Downloading template for file upload
 app.get('/download', function (req, res) {
     if (req.session.loggedin) {
-        const file = `${__dirname}/uploads/Data.xlsx`;
-        res.header("Access-Control-Allow-Origin", "*");
-        res.download(file); // Set disposition and send it.
+
+        con.query("select PRDT_NAME, PRDT_TYPE, PRDT_PRICE from products", function (error, results, fields) {
+            if (error) throw error;
+
+            var workbook = new Excel.Workbook();
+            var worksheet = workbook.addWorksheet('Products');
+
+            worksheet.columns = [
+                { header: 'Product Name', key: 'PRDT_NAME', width: 30 },
+                { header: 'Product Category', key: 'PRDT_TYPE', width: 15 },
+                { header: 'Product Price', key: 'PRDT_PRICE', width: 20 }
+            ];
+
+            worksheet.addRows(results);
+
+            workbook.xlsx.writeFile('uploads/Products.xlsx').then(function () {
+                const file = `${__dirname}/uploads/Products.xlsx`;
+                res.header("Access-Control-Allow-Origin", "*");
+                res.download(file); // Set disposition and send it.
+            });
+
+        });
+
     }
     else {
         res.redirect('/LoginPage');
@@ -410,7 +524,7 @@ app.post('/Register', function (req, res) {
 app.post('/upload', function (req, res) {
     if (req.files) {
         var file = req.files.file;
-        var filename = file.name;
+        var filename = 'Products.xlsx';
 
         file.mv('./uploads/' + filename, function (err) {
             if (err) {
